@@ -7,9 +7,13 @@ import {
   FolderOpen,
   Award,
   Flame,
-  Sparkles
+  Sparkles,
+  FileCode2,
+  GraduationCap,
+  FileText
 } from 'lucide-react';
 import { useGamification } from '../context/GamificationContext.jsx';
+import { AccessibilityControls } from './AccessibilityControls.jsx';
 
 export function AppToolbar({
   onNewTranslation,
@@ -23,6 +27,10 @@ export function AppToolbar({
   onTranslate,
   onOpenAbout,
   onOpenApiKey,
+  onOpenGlossary,
+  onOpenSamples,
+  onOpenLessons,
+  onOpenExportNotes,
   hasApiKey,
 }) {
   const { levelInfo, streakInfo } = useGamification();
@@ -142,6 +150,24 @@ export function AppToolbar({
                   >
                     <span>My Progress Dashboard</span>
                     <span className="text-[10px] text-[#3FB950] font-mono">Lvl {levelInfo?.level || 1}</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleMenuAction(onOpenLessons)}
+                    className="w-full text-left px-3 py-1.5 text-xs text-[#E6EDF3] hover:bg-[#1C2128] flex items-center justify-between"
+                    role="menuitem"
+                  >
+                    <span>పాఠాలు (Guided Lessons)...</span>
+                    <span className="text-[10px] text-[#58A6FF] font-mono">F7</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleMenuAction(onOpenExportNotes)}
+                    className="w-full text-left px-3 py-1.5 text-xs text-[#E6EDF3] hover:bg-[#1C2128] flex items-center justify-between"
+                    role="menuitem"
+                  >
+                    <span>నోట్స్ ఎగుమతి (Export Study Sheet)...</span>
+                    <span className="text-[10px] text-[#3FB950] font-mono">Ctrl+P</span>
                   </button>
                   <div className="h-px bg-[#30363D] my-1" />
                   <button
@@ -313,16 +339,60 @@ export function AppToolbar({
             <span className="text-[#E6EDF3]">Ready</span>
           </div>
 
-          {/* Dictionary Guide Button */}
-          <button
-            type="button"
-            onClick={onOpenAbout}
-            className="p-1 sm:px-2 sm:py-1 rounded-md bg-[#1C2128] hover:bg-[#30363D]/50 text-[#8B949E] hover:text-[#E6EDF3] border border-[#30363D] transition-colors text-xs flex items-center space-x-1"
-            title="Telugu Keyword Dictionary"
-          >
-            <BookOpen className="w-3.5 h-3.5" />
-            <span className="hidden xl:inline">Dictionary</span>
-          </button>
+          {/* Guided Telugu Lessons Button (F7) */}
+          {onOpenLessons && (
+            <button
+              type="button"
+              onClick={onOpenLessons}
+              className="px-2 py-1 rounded-md bg-[#1C2128] hover:bg-[#30363D]/50 text-[#58A6FF] hover:text-[#79C0FF] border border-[#30363D] transition-colors text-xs flex items-center space-x-1 font-medium"
+              title="Guided Telugu Lessons & Quizzes (పాఠాలు)"
+            >
+              <GraduationCap className="w-3.5 h-3.5 text-[#58A6FF]" />
+              <span className="hidden sm:inline">పాఠాలు (Lessons)</span>
+            </button>
+          )}
+
+          {/* Export Notes / Classroom Worksheet Button (F12) */}
+          {onOpenExportNotes && (
+            <button
+              type="button"
+              onClick={onOpenExportNotes}
+              className="px-2 py-1 rounded-md bg-[#1C2128] hover:bg-[#30363D]/50 text-[#3FB950] hover:text-[#56D364] border border-[#30363D] transition-colors text-xs flex items-center space-x-1 font-medium"
+              title="Export Printable Study Sheet or Lab Worksheet (నోట్స్)"
+            >
+              <FileText className="w-3.5 h-3.5 text-[#3FB950]" />
+              <span className="hidden md:inline">నోట్స్ (Notes)</span>
+            </button>
+          )}
+
+          {/* Samples Button (I11) */}
+          {onOpenSamples && (
+            <button
+              type="button"
+              onClick={onOpenSamples}
+              className="px-2 py-1 rounded-md bg-[#1C2128] hover:bg-[#30363D]/50 text-[#D29922] hover:text-[#E3B341] border border-[#30363D] transition-colors text-xs flex items-center space-x-1 font-medium"
+              title="One-Click Sample Programs"
+            >
+              <FileCode2 className="w-3.5 h-3.5 text-[#D29922]" />
+              <span className="hidden sm:inline">నమూనాలు (Samples)</span>
+            </button>
+          )}
+
+          {/* Interactive Telugu Glossary Button (F4 / Appendix B) */}
+          {onOpenGlossary && (
+            <button
+              type="button"
+              onClick={onOpenGlossary}
+              className="px-2 py-1 rounded-md bg-[#1C2128] hover:bg-[#30363D]/50 text-[#58A6FF] hover:text-[#79C0FF] border border-[#30363D] transition-colors text-xs flex items-center space-x-1 font-medium"
+              title="Telugu Programming Glossary (నిఘంటువు)"
+            >
+              <BookOpen className="w-3.5 h-3.5 text-[#58A6FF]" />
+              <span className="hidden md:inline">నిఘంటువు (Glossary)</span>
+            </button>
+          )}
+
+          {/* Accessibility & Font Scaler Controls (I10) */}
+          <AccessibilityControls />
 
           {/* API Key Modal Button */}
           <button

@@ -5,6 +5,11 @@ import { AboutModal } from './components/AboutModal.jsx';
 import { ApiKeyModal } from './components/ApiKeyModal.jsx';
 import { ProgramHistory } from './components/ProgramHistory.jsx';
 import { MyProgressModal } from './components/MyProgressModal.jsx';
+import { GlossaryModal } from './components/GlossaryModal.jsx';
+import { SampleProgramsModal } from './components/SampleProgramsModal.jsx';
+import { FeedbackModal } from './components/FeedbackModal.jsx';
+import { LessonsModal } from './components/LessonsModal.jsx';
+import { ExportNotesModal } from './components/ExportNotesModal.jsx';
 import { XpToast } from './components/XpToast.jsx';
 import { GamificationProvider } from './context/GamificationContext.jsx';
 import { Home } from './pages/Home.jsx';
@@ -21,6 +26,14 @@ function AppLayout() {
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [isProgressOpen, setIsProgressOpen] = useState(false);
   const [isAiTutorOpen, setIsAiTutorOpen] = useState(false);
+  const [isGlossaryOpen, setIsGlossaryOpen] = useState(false);
+  const [glossaryTerm, setGlossaryTerm] = useState('');
+  const [isSamplesOpen, setIsSamplesOpen] = useState(false);
+  const [isLessonsOpen, setIsLessonsOpen] = useState(false);
+  const [isExportNotesOpen, setIsExportNotesOpen] = useState(false);
+  const [exportNotesData, setExportNotesData] = useState(null);
+  const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
+  const [feedbackContext, setFeedbackContext] = useState(null);
   const [hasApiKey, setHasApiKey] = useState(() => Boolean(getActiveApiKey()));
   const [keyUpdateCount, setKeyUpdateCount] = useState(0);
 
@@ -30,6 +43,21 @@ function AppLayout() {
   const checkApiKey = () => {
     const key = getActiveApiKey();
     setHasApiKey(Boolean(key));
+  };
+
+  const handleOpenExportNotes = (data = null) => {
+    if (data) {
+      setExportNotesData(data);
+    } else {
+      const code = homeEditorRef.current ? homeEditorRef.current.getValue() : '';
+      setExportNotesData({
+        code,
+        lineExplanations: [],
+        overallExplanation: '',
+        executionOutput: '',
+      });
+    }
+    setIsExportNotesOpen(true);
   };
 
   // Menu action handlers
@@ -95,6 +123,29 @@ function AppLayout() {
     }
   };
 
+  const handleOpenGlossary = (term = '') => {
+    setGlossaryTerm(term || '');
+    setIsGlossaryOpen(true);
+  };
+
+  const handleOpenSamples = () => {
+    setIsSamplesOpen(true);
+  };
+
+  const handleReportError = (context) => {
+    setFeedbackContext(context);
+    setIsFeedbackOpen(true);
+  };
+
+  const handleApplySnippetToEditor = (snippet) => {
+    if (homeEditorRef.current) {
+      homeEditorRef.current.setValue(snippet);
+    }
+    if (location.pathname !== '/') {
+      navigate('/');
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[#0D1117] text-[#E6EDF3] flex flex-col font-sans">
       {/* IDE Top Toolbar */}
@@ -115,6 +166,10 @@ function AppLayout() {
         onTranslate={handleTranslateFromMenu}
         onOpenAbout={() => setIsAboutOpen(true)}
         onOpenApiKey={() => setIsApiKeyOpen(true)}
+        onOpenGlossary={() => handleOpenGlossary()}
+        onOpenSamples={handleOpenSamples}
+        onOpenLessons={() => setIsLessonsOpen(true)}
+        onOpenExportNotes={() => handleOpenExportNotes()}
         hasApiKey={hasApiKey}
       />
 
@@ -130,6 +185,10 @@ function AppLayout() {
                 isAiTutorOpen={isAiTutorOpen}
                 onToggleAiTutor={() => setIsAiTutorOpen((prev) => !prev)}
                 onOpenApiKey={() => setIsApiKeyOpen(true)}
+                onOpenGlossary={handleOpenGlossary}
+                onOpenSamples={handleOpenSamples}
+                onOpenLessons={() => setIsLessonsOpen(true)}
+                onOpenExportNotes={(data) => handleOpenExportNotes(data)}
               />
             }
           />
@@ -140,6 +199,10 @@ function AppLayout() {
                 keyUpdateCount={keyUpdateCount}
                 onOpenApiKey={() => setIsApiKeyOpen(true)}
                 onOpenAbout={() => setIsAboutOpen(true)}
+                onOpenGlossary={handleOpenGlossary}
+                onReportError={handleReportError}
+                onOpenLessons={() => setIsLessonsOpen(true)}
+                onOpenExportNotes={(data) => handleOpenExportNotes(data)}
               />
             }
           />
@@ -171,6 +234,40 @@ function AppLayout() {
       <MyProgressModal
         isOpen={isProgressOpen}
         onClose={() => setIsProgressOpen(false)}
+      />
+
+      <GlossaryModal
+        isOpen={isGlossaryOpen}
+        onClose={() => setIsGlossaryOpen(false)}
+        initialTerm={glossaryTerm}
+        onSelectSnippet={handleApplySnippetToEditor}
+      />
+
+      <SampleProgramsModal
+        isOpen={isSamplesOpen}
+        onClose={() => setIsSamplesOpen(false)}
+        onSelectProgram={handleApplySnippetToEditor}
+      />
+
+      <LessonsModal
+        isOpen={isLessonsOpen}
+        onClose={() => setIsLessonsOpen(false)}
+        onSelectCode={handleApplySnippetToEditor}
+      />
+
+      <ExportNotesModal
+        isOpen={isExportNotesOpen}
+        onClose={() => setIsExportNotesOpen(false)}
+        code={exportNotesData?.code || ''}
+        lineExplanations={exportNotesData?.lineExplanations || []}
+        overallExplanation={exportNotesData?.overallExplanation || ''}
+        executionOutput={exportNotesData?.executionOutput || ''}
+      />
+
+      <FeedbackModal
+        isOpen={isFeedbackOpen}
+        onClose={() => setIsFeedbackOpen(false)}
+        contextData={feedbackContext}
       />
 
       <XpToast />

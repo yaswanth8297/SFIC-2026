@@ -1,0 +1,18 @@
+{
+  "if": "ఒకవేళ (if)",
+  "else": "లేకపోతే (else)",
+  "elif": "లేకపోతే ఒకవేళ (elif)",
+  "for": "ప్రతి దానికీ (for)",
+  "while": "ఉన్నంతవరకు (while)",
+  "print": "చూపించు (print)",
+  "input": "అడుగు (input)",
+  "def": "నిర్వచించు (def)",
+  "return": "తిరిగి ఇవ్వు (return)",
+  "in": "లో (in)",
+  "and": "మరియు (and)",
+  "or": "లేదా (or)",
+  "not": "కాదు (not)",
+  "True": "నిజం (True)",
+  "False": "అబద్ధం (False)",
+  "None": "ఏమీలేదు (None)"
+}

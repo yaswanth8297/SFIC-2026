@@ -127,6 +127,10 @@ export function getDeterministicLineExplanation(sourceLine, _translatedLine, _li
     return {
       whatItDoes: 'Idi oka empty line (khali line).',
       whyItIsUsed: 'Code chadavadaniki neat ga, clean ga undadaniki lines madhyalo space istham.',
+      teluguScript: {
+        whatItDoes: 'ఇది ఖాళీ లైన్.',
+        whyItIsUsed: 'కోడ్ చదవడానికి వీలుగా లైన్ల మధ్య ఖాళీ ఉంచుతాం.',
+      },
     };
   }
 
@@ -135,6 +139,10 @@ export function getDeterministicLineExplanation(sourceLine, _translatedLine, _li
     return {
       whatItDoes: `Idi comment: "${commentBody}". Python deenni run cheyadu.`,
       whyItIsUsed: 'Programmer ki code gurthu undataniki mariyu logic vivarinchataniki comments vadatharu.',
+      teluguScript: {
+        whatItDoes: `ఇది వ్యాఖ్య (comment): "${commentBody}". పైథాన్ దీనిని అమలు చేయదు.`,
+        whyItIsUsed: 'ప్రోగ్రామర్‌కు కోడ్ లాజిక్ గుర్తుండటానికి కామెంట్స్ రాస్తారు.',
+      },
     };
   }
 
@@ -145,6 +153,10 @@ export function getDeterministicLineExplanation(sourceLine, _translatedLine, _li
     return {
       whatItDoes: `Screen pai (${args || 'value'}) ni chupistundi (output ga isthundi).`,
       whyItIsUsed: 'User ki result chupinchadaniki "print()" function vadatham.',
+      teluguScript: {
+        whatItDoes: `స్క్రీన్‌పై (${args || 'ఫలితాన్ని'}) చూపిస్తుంది (output ga చూపిస్తుంది).`,
+        whyItIsUsed: 'యూజర్‌కు ఫలితాన్ని స్క్రీన్‌పై చూపించడానికి "print()" ఫంక్షన్ వాడతాం.',
+      },
     };
   }
 
@@ -153,6 +165,10 @@ export function getDeterministicLineExplanation(sourceLine, _translatedLine, _li
     return {
       whatItDoes: 'User nundi keyboard dwara value ni theesukuni variable lo store chestundi.',
       whyItIsUsed: 'Program dynamic ga user inputs tho pani cheyadaniki "input()" vadatharu.',
+      teluguScript: {
+        whatItDoes: 'యూజర్ నుండి కీబోర్డ్ ద్వారా విలువను తీసుకుని చరరాశి (variable) లో భద్రపరుస్తుంది.',
+        whyItIsUsed: 'యూజర్ ఇచ్చే డేటాతో ప్రోగ్రామ్ నడవడానికి "input()" వాడతాం.',
+      },
     };
   }
 
@@ -164,6 +180,10 @@ export function getDeterministicLineExplanation(sourceLine, _translatedLine, _li
     return {
       whatItDoes: `"${loopVar}" variable tho range(${rangeArgs}) lo unna prathi number ki kindi code ni repeat chestundi.`,
       whyItIsUsed: 'Oka pani ni multiple times cheyadaniki loop vadatharu.',
+      teluguScript: {
+        whatItDoes: `"${loopVar}" అనే చరరాశి (variable) తో range(${rangeArgs}) లోని ప్రతి సంఖ్య కోసం కింద ఉన్న పనిని మళ్లీ మళ్లీ చేస్తుంది. ఇదే లూప్ (for loop).`,
+        whyItIsUsed: 'ఒకే పనిని పదే పదే చేయడానికి లూప్ (for loop) వాడతాం.',
+      },
     };
   }
 
@@ -174,6 +194,10 @@ export function getDeterministicLineExplanation(sourceLine, _translatedLine, _li
     return {
       whatItDoes: `Condition (${cond}) Nijam (True) ainanthavaraku kindi code repeat avuthundi.`,
       whyItIsUsed: 'Condition true unnantha varaku repeat ga run cheyadaniki while loop vadathamu.',
+      teluguScript: {
+        whatItDoes: `షరతు (${cond}) నిజం (True) అయినంతవరకు కింద ఉన్న కోడ్ మళ్లీ మళ్లీ నడుస్తుంది.`,
+        whyItIsUsed: 'షరతు వర్తించేంతవరకు పునరావృతం చేయడానికి while loop వాడతాం.',
+      },
     };
   }
 
@@ -184,6 +208,10 @@ export function getDeterministicLineExplanation(sourceLine, _translatedLine, _li
     return {
       whatItDoes: `Condition (${cond}) Nijam (True) ayithe mathrame kindi code block execute avuthundi.`,
       whyItIsUsed: 'Decision teesukodaniki (decide cheyadaniki) "if" condition vadathamu.',
+      teluguScript: {
+        whatItDoes: `షరతు (${cond}) నిజం (True) అయితే మాత్రమే ఈ కోడ్ బ్లాక్ అమలు అవుతుంది.`,
+        whyItIsUsed: 'షరతు ఆధారంగా నిర్ణయం తీసుకోవడానికి (if condition) వాడతాం.',
+      },
     };
   }
 
@@ -194,6 +222,10 @@ export function getDeterministicLineExplanation(sourceLine, _translatedLine, _li
     return {
       whatItDoes: `Paina if false ayithe, ee condition (${cond}) check chestundi.`,
       whyItIsUsed: 'Multiple conditions ni okadani tharvatha okati check cheyadaniki "elif" vadathamu.',
+      teluguScript: {
+        whatItDoes: `పైన ఉన్న if షరతు తప్పు (False) అయితే, ఈ కొత్త షరతును (${cond}) తనిఖీ చేస్తుంది.`,
+        whyItIsUsed: 'ఒకదాని తర్వాత మరొక షరతును వరుసగా తనిఖీ చేయడానికి "elif" వాడతాం.',
+      },
     };
   }
 
@@ -202,6 +234,10 @@ export function getDeterministicLineExplanation(sourceLine, _translatedLine, _li
     return {
       whatItDoes: 'Paina unna conditions annie False ainappudu ee block run avuthundi.',
       whyItIsUsed: 'Default case ga, paina evi match kakapothe "else" block execute avvali.',
+      teluguScript: {
+        whatItDoes: 'పైన పేర్కొన్న షరతులన్నీ తప్పు (False) అయినప్పుడు ఈ కోడ్ బ్లాక్ నడుస్తుంది.',
+        whyItIsUsed: 'ఏ షరతు సరిపోలనప్పుడు ప్రత్యామ్నాయంగా "else" బ్లాక్ అమలు కావాలి.',
+      },
     };
   }
 
@@ -213,6 +249,10 @@ export function getDeterministicLineExplanation(sourceLine, _translatedLine, _li
     return {
       whatItDoes: `"${funcName}" ane kotha function ni define chestundi (${params ? `parameters: ${params}` : 'parameters lekunda'}).`,
       whyItIsUsed: 'Code reusability kosam, logic ni oka peru tho group cheyadaniki functions vadatham.',
+      teluguScript: {
+        whatItDoes: `"${funcName}" అనే కొత్త ఫంక్షన్‌ను తయారుచేస్తుంది (${params ? `పారామీటర్లు: ${params}` : 'పారామీటర్లు లేకుండా'}).`,
+        whyItIsUsed: 'కోడ్‌ను తిరిగి వాడుకోవడానికి మరియు ఒక పేరుతో గ్రూప్ చేయడానికి ఫంక్షన్ (def) వాడతాం.',
+      },
     };
   }
 
@@ -222,6 +262,10 @@ export function getDeterministicLineExplanation(sourceLine, _translatedLine, _li
     return {
       whatItDoes: `Function nundi result (${val || 'None'}) ni tirigi pampistundi (return chestundi).`,
       whyItIsUsed: 'Function calculate chesina answer ni caller ki ivvadaniki "return" vadathamu.',
+      teluguScript: {
+        whatItDoes: `ఫంక్షన్ నుండి ఫలితాన్ని (${val || 'None'}) తిరిగి పంపుతుంది (return).`,
+        whyItIsUsed: 'ఫంక్షన్ లెక్కించిన జవాబును పిలిచిన చోటికి పంపడానికి "return" వాడతాం.',
+      },
     };
   }
 
@@ -236,11 +280,19 @@ export function getDeterministicLineExplanation(sourceLine, _translatedLine, _li
       return {
         whatItDoes: `"${expr}" value ni calculate chesi "${varName}" variable lo store chestundi.`,
         whyItIsUsed: 'Data ni memory lo dachukuni tharvatha vadukodaniki variable assignment vadatharu.',
+        teluguScript: {
+          whatItDoes: `"${expr}" విలువను లెక్కించి "${varName}" అనే చరరాశి (variable) లో భద్రపరుస్తుంది.`,
+          whyItIsUsed: 'డేటాను మెమరీలో దాచుకుని భవిష్యత్తులో వాడుకోవడానికి వేరియబుల్ వాడతాం.',
+        },
       };
     } else {
       return {
         whatItDoes: `"${varName}" lo unna value ni "${expr}" tho update chestundi (${op}).`,
         whyItIsUsed: 'Existing variable value ni update cheyadaniki vadathamu.',
+        teluguScript: {
+          whatItDoes: `"${varName}" లో ఉన్న విలువను "${expr}" తో నవీకరిస్తుంది (${op}).`,
+          whyItIsUsed: 'ఇప్పటికే ఉన్న చరరాశి (variable) విలువను మార్చడానికి వాడతాం.',
+        },
       };
     }
   }
@@ -249,5 +301,9 @@ export function getDeterministicLineExplanation(sourceLine, _translatedLine, _li
   return {
     whatItDoes: `Ee line (${trimmed}) oka expression ni evaluate chestundi.`,
     whyItIsUsed: 'Program flow lo ee statement tana calculation ni perform chestundi.',
+    teluguScript: {
+      whatItDoes: `ఈ లైన్ (${trimmed}) ఒక ఎక్స్‌ప్రెషన్‌ను లెక్కిస్తుంది.`,
+      whyItIsUsed: 'ప్రోగ్రామ్ ఫ్లోలో లెక్కలు లేదా పనులు చేయడానికి ఈ స్టేట్‌మెంట్ వాడతాం.',
+    },
   };
 }

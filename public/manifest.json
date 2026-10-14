@@ -1,0 +1,20 @@
+{
+  "name": "CodeToTelugu — Python Learning Studio",
+  "short_name": "CodeToTelugu",
+  "description": "తెలుగులో పైథాన్ కోడింగ్ నేర్చుకోండి — Bilingual Telugu Python workspace with in-browser execution, step tracer, and interactive glossary.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#0D1117",
+  "theme_color": "#0D1117",
+  "orientation": "any",
+  "categories": ["education", "developer tools", "productivity"],
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "48x48 72x72 96x96 128x128 192x192 256x256 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

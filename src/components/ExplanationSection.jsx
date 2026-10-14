@@ -2,7 +2,16 @@ import React, { useState } from 'react';
 import { SpeechControls } from './SpeechControls.jsx';
 import { LoadingState } from './LoadingState.jsx';
 import { ErrorState } from './ErrorState.jsx';
-import { RefreshCw, Copy, Check } from 'lucide-react';
+import {
+  RefreshCw,
+  Copy,
+  Check,
+  ThumbsUp,
+  ThumbsDown,
+  Flag,
+  Sparkles,
+  CheckCircle2
+} from 'lucide-react';
 
 const MODES = [
   {
@@ -35,14 +44,36 @@ export function ExplanationSection({
   onRetry,
   onOpenApiKey,
   speech,
+  onReportError,
+  onSelectLine,
 }) {
   const [copiedSnippetIndex, setCopiedSnippetIndex] = useState(null);
+  const [stepRatings, setStepRatings] = useState({});
 
   const handleCopySnippet = (snippet, index) => {
     if (!snippet) return;
     navigator.clipboard.writeText(snippet);
     setCopiedSnippetIndex(index);
     setTimeout(() => setCopiedSnippetIndex(null), 2000);
+  };
+
+  const handleRateStep = (index, ratingType, e) => {
+    e.stopPropagation();
+    setStepRatings((prev) => ({
+      ...prev,
+      [index]: prev[index] === ratingType ? null : ratingType,
+    }));
+  };
+
+  const handleReportStep = (step, index, e) => {
+    e.stopPropagation();
+    if (onReportError) {
+      onReportError({
+        text: step.explanation,
+        line: step.line || index + 1,
+        title: step.title,
+      });
+    }
   };
 
   const currentModeInfo = MODES.find((m) => m.id === mode) || MODES[1];
@@ -54,15 +85,16 @@ export function ExplanationSection({
         <div>
           <div className="flex items-center space-x-2">
             <h2 className="text-base font-semibold text-[#E6EDF3] tracking-tight">
-              Ee Code Em Chestundi?
+              ఈ కోడ్ ఏమి చేస్తుంది? (Code Explanation)
             </h2>
             <span className="text-xs text-[#8B949E]">/</span>
             <span className="text-xs text-[#8B949E] font-medium">
               Logic Explanation
             </span>
             {modelUsed && (
-              <span className="text-[11px] font-mono text-[#8B949E] px-1.5 py-0.5 rounded bg-[#1C2128] border border-[#30363D]">
-                {modelUsed}
+              <span className="text-[11px] font-mono text-[#8B949E] px-1.5 py-0.5 rounded bg-[#1C2128] border border-[#30363D] flex items-center space-x-1">
+                <Sparkles className="w-2.5 h-2.5 text-[#58A6FF]" />
+                <span>{modelUsed}</span>
               </span>
             )}
           </div>
@@ -101,11 +133,11 @@ export function ExplanationSection({
             <button
               type="button"
               onClick={onRetry}
-              className="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-btn bg-[#1C2128] hover:bg-[#30363D]/50 text-[#8B949E] hover:text-[#E6EDF3] border border-[#30363D] transition-colors text-xs"
-              title="Re-run logic explanation with Gemini"
+              className="p-1.5 rounded-md text-[#8B949E] hover:text-[#E6EDF3] hover:bg-[#1C2128] border border-[#30363D] transition-colors"
+              title="Regenerate explanation"
+              aria-label="Regenerate explanation"
             >
               <RefreshCw className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">Retry</span>
             </button>
           )}
         </div>
@@ -115,7 +147,11 @@ export function ExplanationSection({
       {isLoading ? (
         <LoadingState />
       ) : error ? (
-        <ErrorState error={error} onRetry={onRetry} onOpenApiKey={onOpenApiKey} />
+        <ErrorState
+          error={error}
+          onRetry={onRetry}
+          onOpenApiKey={onOpenApiKey}
+        />
       ) : steps && steps.length > 0 ? (
         <div className="rounded-panel border border-[#30363D] bg-[#161B22] overflow-hidden">
           {/* Global Audio Player Bar */}
@@ -127,20 +163,22 @@ export function ExplanationSection({
             />
           </div>
 
-          {/* GitHub Docs-style Numbered Vertical List */}
+          {/* Numbered Vertical List with Trust & Feedback */}
           <div className="divide-y divide-[#30363D]">
             {steps.map((step, index) => {
               const isSpeakingThisStep =
                 speech.isPlaying && speech.currentStepIndex === index;
+              const rating = stepRatings[index];
 
               return (
                 <article
                   key={index}
-                  className={`flex items-start text-xs transition-colors ${
+                  onClick={() => onSelectLine && onSelectLine(step.line || index + 1)}
+                  className={`flex items-start text-xs transition-colors cursor-pointer ${
                     isSpeakingThisStep ? 'bg-[#1C2128]/80' : 'hover:bg-[#1C2128]/30'
                   }`}
                 >
-                  {/* Narrow Left Column: Step Number with green accent */}
+                  {/* Narrow Left Column: Step Number */}
                   <div className="w-12 sm:w-14 shrink-0 flex flex-col items-center pt-3 pb-3 relative">
                     <span
                       className={`font-mono text-xs font-semibold px-2 py-0.5 rounded ${
@@ -151,26 +189,34 @@ export function ExplanationSection({
                     >
                       {step.stepNumber || index + 1}
                     </span>
-                    {/* Vertical Green Accent Line */}
+                    {/* Vertical Line */}
                     <div className="w-0.5 bg-[#30363D] flex-1 mt-2 min-h-[20px]" />
                   </div>
 
                   {/* Right Column: Step Content */}
-                  <div className="flex-1 py-3 pr-4 pl-2 space-y-1.5">
-                    {/* Step Title */}
-                    <div className="flex items-center space-x-2">
-                      <h3 className="font-semibold text-[13px] text-[#E6EDF3] tracking-tight">
-                        {step.title}
-                      </h3>
-                      {isSpeakingThisStep && (
-                        <span className="text-[10px] text-[#3FB950] font-mono px-1.5 py-0.2 rounded bg-[#1C2128] border border-[#30363D]">
-                          Speaking
-                        </span>
-                      )}
+                  <div className="flex-1 py-3 pr-4 pl-2 space-y-2">
+                    {/* Step Title & Trust Badge */}
+                    <div className="flex items-center justify-between flex-wrap gap-2">
+                      <div className="flex items-center space-x-2">
+                        <h3 className="font-semibold text-[13px] text-[#E6EDF3] tracking-tight">
+                          {step.title}
+                        </h3>
+                        {isSpeakingThisStep && (
+                          <span className="text-[10px] text-[#3FB950] font-mono px-1.5 py-0.2 rounded bg-[#1C2128] border border-[#30363D]">
+                            Speaking
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Trust Badge (I8) */}
+                      <span className="inline-flex items-center space-x-1 text-[10px] text-[#A371F7] bg-[#A371F7]/10 border border-[#A371F7]/25 px-1.5 py-0.5 rounded-full font-sans">
+                        <Sparkles className="w-2.5 h-2.5" />
+                        <span>AI వివరణ</span>
+                      </span>
                     </div>
 
                     {/* Step Explanation in Telugu and English */}
-                    <div className="text-[#E6EDF3] text-xs leading-relaxed font-telugu whitespace-pre-line">
+                    <div className="text-[#E6EDF3] text-xs sm:text-[13px] leading-relaxed font-telugu whitespace-pre-line">
                       {step.explanation}
                     </div>
 
@@ -182,7 +228,10 @@ export function ExplanationSection({
                         </code>
                         <button
                           type="button"
-                          onClick={() => handleCopySnippet(step.codeReference, index)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleCopySnippet(step.codeReference, index);
+                          }}
                           className="ml-2 p-1 rounded hover:bg-[#1C2128] text-[#8B949E] hover:text-[#E6EDF3] transition-colors shrink-0"
                           title="Copy snippet"
                           aria-label="Copy snippet"
@@ -195,6 +244,51 @@ export function ExplanationSection({
                         </button>
                       </div>
                     )}
+
+                    {/* Feedback Toolbar: Thumbs Up / Down & Report Wrong Telugu (I8) */}
+                    <div className="pt-1 flex items-center justify-between text-[11px] text-[#8B949E]">
+                      <span className="text-[#6E7681]">ఈ వివరణ స్పష్టంగా ఉందా?</span>
+
+                      <div className="flex items-center space-x-2">
+                        <button
+                          type="button"
+                          onClick={(e) => handleRateStep(index, 'up', e)}
+                          className={`p-1 rounded transition-colors flex items-center space-x-1 ${
+                            rating === 'up'
+                              ? 'text-[#3FB950] bg-[#238636]/20'
+                              : 'hover:text-[#E6EDF3] hover:bg-[#1C2128]'
+                          }`}
+                          title="స్పష్టంగా ఉంది (Helpful)"
+                        >
+                          <ThumbsUp className="w-3 h-3" />
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={(e) => handleRateStep(index, 'down', e)}
+                          className={`p-1 rounded transition-colors flex items-center space-x-1 ${
+                            rating === 'down'
+                              ? 'text-[#F85149] bg-[#DA3633]/20'
+                              : 'hover:text-[#E6EDF3] hover:bg-[#1C2128]'
+                          }`}
+                          title="సరిగా అర్థం కాలేదు (Confusing)"
+                        >
+                          <ThumbsDown className="w-3 h-3" />
+                        </button>
+
+                        <span className="text-[#30363D]">|</span>
+
+                        <button
+                          type="button"
+                          onClick={(e) => handleReportStep(step, index, e)}
+                          className="flex items-center space-x-1 text-[#8B949E] hover:text-[#D29922] transition-colors text-[10px]"
+                          title="Report translation or grammar issue"
+                        >
+                          <Flag className="w-3 h-3" />
+                          <span>తప్పు అనువాదం నివేదించండి</span>
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 </article>
               );

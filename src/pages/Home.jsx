@@ -1,10 +1,26 @@
 import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AlertCircle, ArrowRight, FolderOpen, Sparkles, AlertTriangle } from 'lucide-react';
+import {
+  AlertCircle,
+  ArrowRight,
+  FolderOpen,
+  Sparkles,
+  AlertTriangle,
+  BookOpen,
+  FileCode2,
+  Play,
+  GitFork,
+  GraduationCap,
+  FileText
+} from 'lucide-react';
 import { CodeEditor } from '../components/CodeEditor.jsx';
 import { EditorTabs } from '../components/EditorTabs.jsx';
 import { AiTutorPanel } from '../components/AiTutorPanel.jsx';
 import { ErrorExplainer } from '../components/ErrorExplainer.jsx';
+import { MobileSymbolBar } from '../components/MobileSymbolBar.jsx';
+import { CodeRunnerTerminal } from '../components/CodeRunnerTerminal.jsx';
+import { TeluguToPythonModal } from '../components/TeluguToPythonModal.jsx';
+import { FlowchartVisualizer } from '../components/FlowchartVisualizer.jsx';
 import { saveTranslationRequest } from '../utils/storage.js';
 
 const STARTER_CODE = `name = input("Enter your name: ")
@@ -22,6 +38,10 @@ export function Home({
   isAiTutorOpen = false,
   onToggleAiTutor,
   onOpenApiKey,
+  onOpenGlossary,
+  onOpenSamples,
+  onOpenLessons,
+  onOpenExportNotes,
 }) {
   const navigate = useNavigate();
   const [code, setCode] = useState(STARTER_CODE);
@@ -34,15 +54,28 @@ export function Home({
   const [isErrorExplainerOpen, setIsErrorExplainerOpen] = useState(false);
   const [highlightedErrorLine, setHighlightedErrorLine] = useState(null);
 
+  // In-Browser Code Runner Terminal & Right Companion state (F1)
+  const [isRunnerOpen, setIsRunnerOpen] = useState(true);
+  const [activeRightTab, setActiveRightTab] = useState('runner'); // 'runner' | 'tutor'
+  const [runnerTriggerCount, setRunnerTriggerCount] = useState(0);
+
+  // Reverse Mode: Telugu to Python state (F6)
+  const [isTeluguToPythonOpen, setIsTeluguToPythonOpen] = useState(false);
+
+  // Flowchart visualizer state (F13)
+  const [isFlowchartOpen, setIsFlowchartOpen] = useState(false);
+
   const localEditorRef = useRef(null);
   const activeEditorRef = externalEditorRef || localEditorRef;
 
   const activeTutorOpen = onToggleAiTutor ? isAiTutorOpen : localTutorOpen;
   const handleToggleTutor = () => {
+    setActiveRightTab('tutor');
+    setIsRunnerOpen(true);
     if (onToggleAiTutor) {
-      onToggleAiTutor();
+      if (!isAiTutorOpen) onToggleAiTutor();
     } else {
-      setLocalTutorOpen((prev) => !prev);
+      setLocalTutorOpen(true);
     }
   };
 
@@ -126,23 +159,73 @@ export function Home({
           </p>
         </div>
 
-        <button
-          type="button"
-          onClick={handleToggleTutor}
-          className={`self-start sm:self-auto inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-btn text-xs font-medium border transition-colors ${
-            activeTutorOpen
-              ? 'bg-[#1F6FEB]/20 border-[#58A6FF] text-[#58A6FF]'
-              : 'bg-[#161B22] border-[#30363D] text-[#8B949E] hover:text-[#E6EDF3] hover:bg-[#1C2128]'
-          }`}
-          title="Toggle AI Coding Companion"
-        >
-          <Sparkles className="w-3.5 h-3.5 text-[#58A6FF]" />
-          <span>{activeTutorOpen ? 'Close AI Tutor' : 'Open AI Tutor'}</span>
-        </button>
+        <div className="flex items-center flex-wrap gap-2">
+          {onOpenLessons && (
+            <button
+              type="button"
+              onClick={onOpenLessons}
+              className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-btn text-xs font-medium bg-[#161B22] border border-[#30363D] text-[#58A6FF] hover:text-[#79C0FF] hover:bg-[#1C2128] transition-colors"
+              title="Guided Telugu Lessons & Quizzes (పాఠాలు)"
+            >
+              <GraduationCap className="w-3.5 h-3.5 text-[#58A6FF]" />
+              <span>పాఠాలు (Lessons)</span>
+            </button>
+          )}
+
+          {onOpenSamples && (
+            <button
+              type="button"
+              onClick={onOpenSamples}
+              className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-btn text-xs font-medium bg-[#161B22] border border-[#30363D] text-[#3FB950] hover:text-[#56D364] hover:bg-[#1C2128] transition-colors"
+              title="One-Click Sample Programs"
+            >
+              <FileCode2 className="w-3.5 h-3.5 text-[#3FB950]" />
+              <span>నమూనా కోడ్ (Samples)</span>
+            </button>
+          )}
+
+          {onOpenExportNotes && (
+            <button
+              type="button"
+              onClick={() => onOpenExportNotes({ code })}
+              className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-btn text-xs font-medium bg-[#161B22] border border-[#30363D] text-[#3FB950] hover:text-[#56D364] hover:bg-[#1C2128] transition-colors"
+              title="Export Printable Study Sheet (నోట్స్)"
+            >
+              <FileText className="w-3.5 h-3.5 text-[#3FB950]" />
+              <span>నోట్స్ (Notes)</span>
+            </button>
+          )}
+
+          {onOpenGlossary && (
+            <button
+              type="button"
+              onClick={() => onOpenGlossary()}
+              className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-btn text-xs font-medium bg-[#161B22] border border-[#30363D] text-[#8B949E] hover:text-[#E6EDF3] hover:bg-[#1C2128] transition-colors"
+              title="Programming Glossary (నిఘంటువు)"
+            >
+              <BookOpen className="w-3.5 h-3.5 text-[#58A6FF]" />
+              <span>నిఘంటువు (Glossary)</span>
+            </button>
+          )}
+
+          <button
+            type="button"
+            onClick={handleToggleTutor}
+            className={`inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-btn text-xs font-medium border transition-colors ${
+              activeTutorOpen
+                ? 'bg-[#1F6FEB]/20 border-[#58A6FF] text-[#58A6FF]'
+                : 'bg-[#161B22] border-[#30363D] text-[#8B949E] hover:text-[#E6EDF3] hover:bg-[#1C2128]'
+            }`}
+            title="Toggle AI Coding Companion"
+          >
+            <Sparkles className="w-3.5 h-3.5 text-[#58A6FF]" />
+            <span>{activeTutorOpen ? 'Close AI Tutor' : 'Open AI Tutor'}</span>
+          </button>
+        </div>
       </div>
 
-      {/* Editor & AI Tutor Container (Side-by-side when open on desktop, stacked on mobile) */}
-      <div className={activeTutorOpen ? 'grid grid-cols-1 lg:grid-cols-2 gap-4 items-start' : 'w-full'}>
+      {/* Editor & Right Companion Container (Side-by-side on desktop, stacked on mobile) */}
+      <div className={(isRunnerOpen || activeTutorOpen) ? 'grid grid-cols-1 lg:grid-cols-2 gap-4 items-start' : 'w-full'}>
         {/* Main Editor Panel (Border #30363D, 8px radius, solid dark surface) */}
         <div className="rounded-panel border border-[#30363D] bg-[#161B22] overflow-hidden flex flex-col justify-between">
           <div>
@@ -156,13 +239,16 @@ export function Home({
               onClear={handleClearCode}
             />
 
+            {/* Mobile Programming Symbol Bar (I7) */}
+            <MobileSymbolBar editorRef={activeEditorRef} />
+
             {/* Monaco Editor */}
             <CodeEditor
               value={code}
               onChange={setCode}
               onCursorChange={setCursorPos}
               editorRef={activeEditorRef}
-              height={activeTutorOpen ? '500px' : '420px'}
+              height="500px"
               language="python"
               highlightedLine={highlightedErrorLine}
               highlightClass="monaco-error-active-line"
@@ -186,18 +272,92 @@ export function Home({
           </div>
         </div>
 
-        {/* AI Coding Companion Panel */}
-        {activeTutorOpen && (
-          <AiTutorPanel
-            code={code}
-            selectedLine={cursorPos.lineNumber}
-            onApplyCode={handleApplyCode}
-            onOpenApiKey={onOpenApiKey}
-            isOpen={activeTutorOpen}
-            onClose={handleCloseTutor}
-          />
+        {/* Right Companion Panel: Terminal Output on Right Side of Code OR AI Tutor */}
+        {(isRunnerOpen || activeTutorOpen) && (
+          <div className="flex flex-col space-y-2">
+            {/* Right Panel Tabs Header */}
+            <div className="flex items-center justify-between px-1">
+              <div className="flex items-center space-x-1 p-0.5 rounded bg-[#161B22] border border-[#30363D]">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsRunnerOpen(true);
+                    setActiveRightTab('runner');
+                  }}
+                  className={`px-3 py-1 rounded text-xs font-medium flex items-center space-x-1.5 transition-colors ${
+                    activeRightTab === 'runner'
+                      ? 'bg-[#238636] text-white shadow-xs'
+                      : 'text-[#8B949E] hover:text-[#E6EDF3]'
+                  }`}
+                >
+                  <Play className="w-3 h-3 fill-current" />
+                  <span>టెర్మినల్ అవుట్‌పుట్ (Terminal)</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setActiveRightTab('tutor');
+                    if (!activeTutorOpen) handleToggleTutor();
+                  }}
+                  className={`px-3 py-1 rounded text-xs font-medium flex items-center space-x-1.5 transition-colors ${
+                    activeRightTab === 'tutor'
+                      ? 'bg-[#1F6FEB] text-white shadow-xs'
+                      : 'text-[#8B949E] hover:text-[#E6EDF3]'
+                  }`}
+                >
+                  <Sparkles className="w-3 h-3 text-[#58A6FF]" />
+                  <span>AI ట్యూటర్ (Tutor)</span>
+                </button>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setIsRunnerOpen(false);
+                  handleCloseTutor();
+                }}
+                className="text-xs text-[#8B949E] hover:text-[#E6EDF3] px-2 py-1 rounded hover:bg-[#161B22] transition-colors"
+                title="Hide right panel"
+              >
+                మూయి (Hide)
+              </button>
+            </div>
+
+            {activeRightTab === 'runner' ? (
+              <CodeRunnerTerminal
+                code={code}
+                autoRunTrigger={runnerTriggerCount}
+                onClose={() => setIsRunnerOpen(false)}
+                onHighlightLine={setHighlightedErrorLine}
+                className="min-h-[500px]"
+              />
+            ) : (
+              <AiTutorPanel
+                code={code}
+                selectedLine={cursorPos.lineNumber}
+                onApplyCode={handleApplyCode}
+                onOpenApiKey={onOpenApiKey}
+                isOpen={true}
+                onClose={() => {
+                  setActiveRightTab('runner');
+                  handleCloseTutor();
+                }}
+              />
+            )}
+          </div>
         )}
       </div>
+
+      {/* Code to Flowchart Visualizer (Feature F13) */}
+      {isFlowchartOpen && (
+        <div className="pt-1">
+          <FlowchartVisualizer
+            code={code}
+            onClose={() => setIsFlowchartOpen(false)}
+          />
+        </div>
+      )}
 
       {/* Explain Python Error Panel (Appears below editor when opened) */}
       {isErrorExplainerOpen && (
@@ -225,24 +385,64 @@ export function Home({
 
       {/* Main Actions (Directly below editor, left-aligned) */}
       <div className="flex items-center justify-start space-x-2 pt-1 flex-wrap gap-y-2">
-        {/* 1. Translate to Telugu */}
+        {/* 1. Run Python in Browser (Feature F1) */}
+        <button
+          type="button"
+          onClick={() => {
+            setIsRunnerOpen(true);
+            setActiveRightTab('runner');
+            setRunnerTriggerCount((c) => c + 1);
+          }}
+          disabled={!code.trim()}
+          className="inline-flex items-center space-x-1.5 px-4 py-2 rounded-btn font-semibold text-xs bg-[#238636] hover:bg-[#2EA043] text-white active:bg-[#238636] transition-colors shadow-xs"
+          title="Run Python code in browser terminal on the right side"
+        >
+          <Play className="w-3.5 h-3.5 fill-current" />
+          <span>అమలు చేయి (Run Code)</span>
+        </button>
+
+        {/* 2. Translate to Telugu */}
         <button
           type="button"
           onClick={handleTranslate}
           disabled={isSubmitting || !code.trim() || isOverLimit}
-          className={`inline-flex items-center space-x-2 px-4 py-2 rounded-btn font-medium text-xs transition-colors ${
-            isSubmitting || !code.trim() || isOverLimit
-              ? 'bg-[#238636]/50 text-white/50 cursor-not-allowed'
-              : 'bg-[#238636] hover:bg-[#2EA043] text-white active:bg-[#238636]'
+          className={`inline-flex items-center space-x-2 px-4 py-2 rounded-btn font-medium text-xs border border-[#30363D] bg-[#161B22] hover:bg-[#1C2128] text-[#E6EDF3] transition-colors ${
+            isSubmitting || !code.trim() || isOverLimit ? 'opacity-50 cursor-not-allowed' : ''
           }`}
           title="Translate code to Telugu"
         >
-          <span>Translate to Telugu</span>
-          <span className="text-white/70 font-normal">/ Telugu lo ki Marchu</span>
-          <ArrowRight className="w-3.5 h-3.5 ml-1 text-white/80" />
+          <span>తెలుగులోకి అనువదించు (Translate)</span>
+          <ArrowRight className="w-3.5 h-3.5 ml-1 text-[#58A6FF]" />
         </button>
 
-        {/* 2. Explain Python Error (Matching Reference Design: Dark background, red warning-triangle, subtle border) */}
+        {/* 3. Reverse Mode: Telugu to Python (Feature F6) */}
+        <button
+          type="button"
+          onClick={() => setIsTeluguToPythonOpen(true)}
+          className="inline-flex items-center space-x-1.5 px-3 py-2 rounded-btn bg-[#1F6FEB]/15 hover:bg-[#1F6FEB]/25 border border-[#58A6FF]/40 text-[#58A6FF] font-medium text-xs transition-colors"
+          title="Generate Python from Telugu descriptions"
+        >
+          <Sparkles className="w-3.5 h-3.5 text-[#58A6FF]" />
+          <span>తెలుగు నుండి కోడ్ (Reverse Mode)</span>
+        </button>
+
+        {/* 4. Code to Flowchart (Feature F13) */}
+        <button
+          type="button"
+          onClick={() => setIsFlowchartOpen((prev) => !prev)}
+          disabled={!code.trim()}
+          className={`inline-flex items-center space-x-1.5 px-3 py-2 rounded-btn border text-xs font-medium transition-colors ${
+            isFlowchartOpen
+              ? 'bg-[#A371F7]/20 border-[#A371F7] text-[#D2A8FF]'
+              : 'bg-[#1C2128] hover:bg-[#30363D]/50 text-[#E6EDF3] border-[#30363D]'
+          }`}
+          title="Visual Flowchart with Telugu labels"
+        >
+          <GitFork className="w-3.5 h-3.5 text-[#A371F7]" />
+          <span>ఫ్లోచార్ట్ (Flowchart)</span>
+        </button>
+
+        {/* 5. Explain Python Error */}
         <button
           type="button"
           onClick={() => {
@@ -262,7 +462,7 @@ export function Home({
           <span>Explain Python Error</span>
         </button>
 
-        {/* 3. Ask AI Tutor */}
+        {/* 6. Ask AI Tutor */}
         <button
           type="button"
           onClick={handleToggleTutor}
@@ -277,7 +477,7 @@ export function Home({
           <span>{activeTutorOpen ? 'Close AI Tutor' : 'Ask AI Tutor'}</span>
         </button>
 
-        {/* 4. Open Saved Program */}
+        {/* 7. Open Saved Program */}
         {onOpenHistory && (
           <button
             type="button"
@@ -290,6 +490,13 @@ export function Home({
           </button>
         )}
       </div>
+
+      {/* Reverse Mode Modal */}
+      <TeluguToPythonModal
+        isOpen={isTeluguToPythonOpen}
+        onClose={() => setIsTeluguToPythonOpen(false)}
+        onApplyCode={handleApplyCode}
+      />
     </main>
   );
 }

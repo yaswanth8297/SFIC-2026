@@ -59,6 +59,42 @@ export function saveTranslationRequest(code, language = 'telugu') {
 }
 
 /**
+ * Update an existing translation request in localStorage
+ *
+ * @param {string} id - Request ID
+ * @param {string} code - Updated Python code
+ * @param {string} [language='telugu'] - Target language
+ * @returns {{ success: boolean, error?: string }}
+ */
+export function updateTranslationRequest(id, code, language = 'telugu') {
+  if (!id || typeof id !== 'string') {
+    return { success: false, error: 'Invalid or missing request ID' };
+  }
+  if (typeof code !== 'string') {
+    return { success: false, error: 'Code must be a string' };
+  }
+
+  const key = `${REQUEST_PREFIX}${id}`;
+  const payload = {
+    id,
+    code,
+    language,
+    timestamp: Date.now(),
+  };
+
+  try {
+    if (typeof window === 'undefined' || !window.localStorage) {
+      return { success: false, error: 'localStorage is not available' };
+    }
+    window.localStorage.setItem(key, JSON.stringify(payload));
+    return { success: true };
+  } catch (err) {
+    console.error('Failed to update translation request in localStorage:', err);
+    return { success: false, error: 'Failed to access browser storage' };
+  }
+}
+
+/**
  * Retrieve a translation request by ID
  *
  * @param {string} id - Request ID

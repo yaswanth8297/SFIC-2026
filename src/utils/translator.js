@@ -1,4 +1,8 @@
 import teluguDictionary from '../dictionary/telugu.json' with { type: 'json' };
+import teluguScriptDictionary from '../dictionary/teluguScript.json' with { type: 'json' };
+import teluguBilingualDictionary from '../dictionary/teluguBilingual.json' with { type: 'json' };
+
+export { teluguDictionary, teluguScriptDictionary, teluguBilingualDictionary };
 
 /**
  * Token types produced by the Python lexical scanner
@@ -219,6 +223,16 @@ export function translateCode(originalCode, customDictionary = teluguDictionary)
     return '';
   }
 
+  // Resolve dictionary if mode string is passed
+  let dict = customDictionary;
+  if (customDictionary === 'script') {
+    dict = teluguScriptDictionary;
+  } else if (customDictionary === 'bilingual') {
+    dict = teluguBilingualDictionary;
+  } else if (customDictionary === 'phonetic' || !customDictionary) {
+    dict = teluguDictionary;
+  }
+
   const tokens = tokenizePython(originalCode);
   const result = [];
 
@@ -234,7 +248,7 @@ export function translateCode(originalCode, customDictionary = teluguDictionary)
     const word = token.value;
 
     // Check if the identifier matches a keyword in our dictionary
-    if (!Object.prototype.hasOwnProperty.call(customDictionary, word)) {
+    if (!Object.prototype.hasOwnProperty.call(dict, word)) {
       result.push(word);
       continue;
     }
@@ -283,7 +297,7 @@ export function translateCode(originalCode, customDictionary = teluguDictionary)
     }
 
     // Otherwise, translate using dictionary
-    result.push(customDictionary[word]);
+    result.push(dict[word]);
   }
 
   return result.join('');

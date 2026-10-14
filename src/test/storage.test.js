@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import {
   saveTranslationRequest,
+  updateTranslationRequest,
   getTranslationRequest,
   saveExplanationCache,
   getExplanationCache,
@@ -43,6 +44,20 @@ describe('Storage Utility', () => {
     expect(fetchRes.success).toBe(true);
     expect(fetchRes.data.code).toBe(code);
     expect(fetchRes.data.language).toBe('telugu');
+  });
+
+  it('updates an existing translation request with new code', () => {
+    const code = 'print("version 1")';
+    const saveRes = saveTranslationRequest(code, 'telugu');
+    expect(saveRes.success).toBe(true);
+
+    const updatedCode = 'print("version 2 - modified")';
+    const updateRes = updateTranslationRequest(saveRes.id, updatedCode);
+    expect(updateRes.success).toBe(true);
+
+    const fetchRes = getTranslationRequest(saveRes.id);
+    expect(fetchRes.success).toBe(true);
+    expect(fetchRes.data.code).toBe(updatedCode);
   });
 
   it('12. ensures multiple translation requests do not overwrite each other', () => {
